@@ -5,7 +5,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\TurnController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('gamehub');
 });
 
 Route::post('/game/start', [GameController::class, 'startGame']);
