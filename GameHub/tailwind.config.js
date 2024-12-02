@@ -15,7 +15,7 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                night: "#0B1110",
+                night: "#0E0C12",
                 raisin: "#24262B",
                 violet: "#441F64",
                 lavender: "#A491D3",

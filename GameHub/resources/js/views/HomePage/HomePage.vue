@@ -1,5 +1,5 @@
 <template>
-    <div class="home bg-night min-h-screen p-8">
+    <div class="home flex flex-col bg-night min-h-screen py-20 gap-10">
       <header class="header text-gray-50 text-center mb-8">
         <h1 class="text-3xl font-bold mb-2">Welkom bij GameHub</h1>
         <p class="text-lg">Kies een game en begin met spelen!</p>
@@ -9,12 +9,12 @@
         <div
           v-for="game in games"
           :key="game.id"
-          class="game-card bg-raisin rounded-lg shadow-lg p-6 w-80 text-left">
-          <h2 class="text-xl text-white font-semibold mb-4">{{ game.name }}</h2>
-          <img :src="game.image" alt="" class="rounded-md mb-4 w-full h-48 object-cover" />
+          class="game-card bg-raisin rounded-lg shadow-lg p-6 w-1/4 text-left">
+          <h2 class="text-xl text-white font-semibold italic mb-4">{{ game.name }}</h2>
+          <img :src="game.image" alt="" class="rounded-md mb-4 w-full h-64 object-cover" />
           <button
             @click="goToGame(game.id)"
-            class="bg-purple-900 text-white py-2 px-4 rounded hover:bg-violet transition">
+            class="bg-purple-900 text-white py-3 px-8 rounded-md hover:bg-violet transition">
             Speel Nu
           </button>
         </div>
@@ -65,6 +65,11 @@
             id: "paarden-race",
             name: "Paarden Race",
             image: "/image/paardenRace.jpg",
+          },
+          {
+            id: "toepen",
+            name: "Toepen",
+            image: "/image/toepen.jpg",
           },
         ],
       };
