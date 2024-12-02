@@ -14,6 +14,13 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                night: "#0B1110",
+                raisin: "#24262B",
+                violet: "#441F64",
+                lavender: "#A491D3",
+                white: "#FFFFFF",
+            },
         },
     },
     plugins: [],
