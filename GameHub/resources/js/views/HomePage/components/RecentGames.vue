@@ -10,7 +10,7 @@
                     <img :src="game.image" alt="" class="rounded-md mb-4 w-full h-64 object-cover" />
                     <button
                     @click="$emit('goToGame', game.id)"
-                    class="bg-purple-900 text-white py-3 px-8 rounded-md hover:bg-violet transition">
+                    class="bg-purple-800 px-4 py-2 text-white rounded hover:bg-violet mt-3">
                     Speel Nu
                     </button>
                 </div>
