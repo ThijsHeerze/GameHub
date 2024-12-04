@@ -9,6 +9,10 @@ class TurnController extends Controller
 {
     public function guess(Request $request, Player $player)
     {
+        if (!$player) {
+            return response()->json(['error' => 'Player not found'], 404);
+        }
+
         $game = $player->game;
 
         $guess = $request->input('guess');

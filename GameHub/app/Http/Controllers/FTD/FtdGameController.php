@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Game;
+use App\Models\FTD\Game;
 use Illuminate\Http\Request;
 
-class GameController extends Controller
+class FtdGameController extends Controller
 {
     public function startGame(Request $request)
     {
+        $validated = $request->validate([
+            'players' => 'required|array|min:2',
+            'players.*' => 'required|string|max:255',
+        ]);
+        
         //:: allows you to declare a class without passing it as a string
         $game = Game::create();
         

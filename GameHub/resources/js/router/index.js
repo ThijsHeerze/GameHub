@@ -12,6 +12,10 @@ const routes = [
   //Routes for FTD
   { path: '/Home', name: 'Home', component: Home },
   { path: '/game/:id', name: 'Game', component: Game },
+
+  //Routes for Whist
+  // { path: '/Home', name: 'Home', component: Home },
+  // { path: '/Home', name: 'Home', component: Home },
 ];
 
 const router = createRouter({

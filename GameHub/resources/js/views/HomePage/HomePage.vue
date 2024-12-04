@@ -57,7 +57,7 @@
       return {
         games: [
           {
-            id: "fuck-the-dealer",
+            id: "1",
             name: "Fuck the Dealer",
             image: "/image/FTD.jpg",
           },
