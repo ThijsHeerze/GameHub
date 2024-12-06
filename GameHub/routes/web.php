@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FTD\FtdGameController;
 use App\Http\Controllers\FTD\TurnController;
+use App\Http\Controllers\FTD\PlayerController;
 
 Route::get('/', function () {
     return view('gamehub');
