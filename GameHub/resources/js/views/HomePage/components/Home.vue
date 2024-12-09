@@ -14,37 +14,31 @@
             <div class="absolute w-2/5 bottom-5 left-5 bg-black bg-opacity-70 text-white p-4 rounded-lg">
               <h2 class="text-2xl font-bold">{{ state.name }}</h2>
               <p class="mt-2">{{ state.description }}</p>
-              <button class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3" @click="goToGame(state.id)">
+              <button class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3" @click="goToGame(game.id)">
                 Speel Nu
               </button>
             </div>
           </div>
         </div>
-        <button @click="prev()" class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-3xl text-white px-4 py-2 rounded-lg">
+        <button @click="prev()" class="absolute left-3 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-3xl text-white px-4 py-2 rounded-lg transition-opacity hover:scale-110 hover:bg-opacity-100">
           <
         </button>
-        <button @click="next()" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-3xl text-white px-4 py-2 rounded-lg">
+        <button @click="next()" class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-3xl text-white px-4 py-2 rounded-lg transition-opacity hover:scale-110 hover:bg-opacity-100">
           >
         </button>
       </div>
 
       <!-- Sidebar -->
       <div class="w-1/4 text-white py-10 px-6">
-        <h2 class="text-xl font-bold mb-6">Aangeklikte Games</h2>
-        <div
-          v-for="game in games"
-          :key="game.id"
-          class="mb-6 flex items-center gap-4"
-        >
-          <img
-            :src="game.thumbnail"
-            alt="Game Thumbnail"
-            class="w-16 h-16 rounded-lg object-cover"
-          />
-          <div>
-            <h3 class="text-lg font-semibold">{{ game.name }}</h3>
-          </div>
-        </div>
+        <h2 class="text-xl font-bold mb-6">Games</h2>
+        <ul class="w-full mb-6 flex flex-col items-center gap-4 p-2 rounded-lg cursor-pointer">
+          <li v-for="game in games" :key="game.id" class="w-full flex items-center hover:bg-violet p-2 rounded-lg cursor-pointe">
+            <router-link :to="game.path" class="flex w-full gap-4 items-center">
+              <img :src="game.thumbnail" :alt="game.thumbnail" class="w-16 h-16 rounded-lg object-cover" />
+              <h3 class="text-lg font-semibold">{{ game.name }}</h3>
+            </router-link>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -64,6 +58,7 @@ export default {
         description: "Fuck the Dealer is een drankspel waarbij de dealer kaartwaarden raadt, en spelers drinken op basis van fouten.",
         image: "/image/FTD.jpg",
         thumbnail: "/image/FTD.jpg",
+        path: "/Home",
       },
       {
         id: "2",
@@ -71,6 +66,7 @@ export default {
         description: "Paardenrace is een drankspel waarbij spelers inzetten op  paarden die een race houden, en drinken afhankelijk van het resultaat.",
         image: "/image/paardenRace.jpg",
         thumbnail: "/image/paardenRace.jpg",
+        path: "/paardenRace",
       },
       {
         id: "3",
@@ -78,6 +74,7 @@ export default {
         description: "Drankspel Toepen is een variant van Toepen, waarbij de verliezer van een slag of ronde een slok neemt.",
         image: "/image/toepen.jpg",
         thumbnail: "/image/toepen.jpg",
+        path: "/toepen",
       },
     ]);
 
