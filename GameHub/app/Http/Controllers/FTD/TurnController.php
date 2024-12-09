@@ -1,14 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\FTD;
 
 use App\Http\Controllers\Controller;
+use App\Models\FTD\Game;
+use App\Models\FTD\Card;
+use App\Models\FTD\Turn;
+use App\Models\FTD\Player;
 use Illuminate\Http\Request;
 
 class TurnController extends Controller
 {
     public function guess(Request $request, Player $player)
     {
+        if (!$player) {
+            return response()->json(['error' => 'Player not found'], 404);
+        }
+
         $game = $player->game;
 
         $guess = $request->input('guess');
@@ -25,6 +33,12 @@ class TurnController extends Controller
         ]);
 
         $card->update(['is_drawn' => true]);
+
+        // try {
+        //     $player->update(['drinks_taken' => $player->drinks_taken + $drinks]);
+        // } catch (error) {
+        //     console.error(error.response.data);
+        // }
 
         return response()->json($turn);
     }

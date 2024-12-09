@@ -14,6 +14,10 @@ const routes = [
   { path: '/Home', name: 'Home', component: Home },
   { path: '/game/:id', name: 'Game', component: Game },
 
+  //Routes for Whist
+  // { path: '/Home', name: 'Home', component: Home },
+  // { path: '/Home', name: 'Home', component: Home },
+  
   //Routes for paardenRace
   { path: '/paardenRace', name: 'paardenRace', component: paardenRace },
 

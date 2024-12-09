@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\FTD;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +16,7 @@ class Game extends Model
 
     public function cards()
     {
-        return $this->hasMany(Cards::class);
+        return $this->hasMany(Card::class);
     }
 
     public function turns()
