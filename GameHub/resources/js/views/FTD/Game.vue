@@ -85,8 +85,22 @@ export default {
     async loadGame() {
       try {
         const response = await axios.get(`/game/${this.gameId}`);
+        
         this.game = response.data;
-        this.dealer = this.game.players.find((p) => p.is_dealer);
+        console.log('Game data:', this.game); // Log the entire game data for debugging
+        
+        if (this.game.players && Array.isArray(this.game.players)) {
+          console.log('Players array:', this.game.players); // Log the players array for debugging
+          this.game.players.forEach((player, index) => {
+            console.log(`Player ${index}:`, player); // Log each player for debugging
+          });
+
+          this.dealer = this.game.players.find((p) => p.is_dealer);
+          console.log('Dealer:', this.dealer); // Log the dealer for debugging
+        } else {
+          console.error('Players array is missing or not an array');
+        }
+
         this.currentPlayer =
           this.game.players[this.game.turns.length % this.game.players.length];
         this.remainingCards = 52 - this.game.turns.length; // Bijv. kaarten nog in het spel
