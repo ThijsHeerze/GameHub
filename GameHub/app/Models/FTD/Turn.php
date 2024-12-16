@@ -2,11 +2,20 @@
 
 namespace App\Models\FTD;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Turn extends Model
 {
-    protected $fillable = ['guess', 'correct', 'drinks_taken'];
+    use HasFactory;
+
+    protected $fillable = [
+        'player_id',
+        'game_id',
+        'guess',
+        'correct',
+        'drinks_taken',
+    ];
 
     public function game()
     {

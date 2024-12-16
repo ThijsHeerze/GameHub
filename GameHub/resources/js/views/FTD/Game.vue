@@ -6,14 +6,11 @@
       </h1>
 
       <div v-if="game">
-        <h2 class="text-xl font-semibold text-gray-700 mb-2">
-          Huidige Dealer: <span class="text-blue-500">{{ dealer?.name }}</span>
-        </h2>
         <p class="text-gray-600 mb-4">Kaarten over: <span class="font-bold">{{ remainingCards }}</span></p>
 
         <div v-if="currentPlayer" class="mb-6">
           <h3 class="text-lg font-semibold text-gray-800 mb-2">
-            {{ currentPlayer.name }}, raad een kaart
+            {{ currentPlayer?.name }}, raad een kaart
           </h3>
           <div class="flex items-center space-x-4">
             <input
@@ -42,7 +39,7 @@
             class="p-4 bg-gray-50 border rounded-lg shadow-sm flex justify-between items-center"
           >
             <span class="text-gray-700">
-              <span class="font-semibold">{{ turn.player.name }}</span> raadde
+              <span class="font-semibold">{{ turn.player?.name }}</span> raadde
               <span class="font-semibold">{{ turn.guess }}</span>:
             </span>
             <span
@@ -66,7 +63,7 @@ export default {
   data() {
     return {
       game: null,
-      dealer: null,
+      // dealer: null,
       currentPlayer: null,
       remainingCards: 0,
       guess: "",
@@ -86,9 +83,19 @@ export default {
       try {
         const response = await axios.get(`/game/${this.gameId}`);
         this.game = response.data;
-        this.dealer = this.game.players.find((p) => p.is_dealer);
+        console.log('Game data:', this.game); // Log the entire game data for debugging
+        
+        if (this.game.players && Array.isArray(this.game.players)) {
+          console.log('Players array:', this.game.players); // Log the players array for debugging
+          this.game.players.forEach((player, index) => {
+            console.log(`Player ${index}:`, player); // Log each player for debugging
+          });
+        } else {
+          console.error('Players array is missing or not an array');
+        }
+
         this.currentPlayer =
-          this.game.players[this.game.turns.length % this.game.players.length];
+          this.game.players[this.game.turns.length % this.game.players.length] || null;
         this.remainingCards = 52 - this.game.turns.length; // Bijv. kaarten nog in het spel
         this.turns = this.game.turns;
       } catch (error) {
@@ -96,18 +103,30 @@ export default {
       }
     },
     async submitGuess() {
+      if (!this.currentPlayer) {
+        console.error("Geen huidige speler gevonden");
+        return;
+      }
+
       try {
+        const payload = {
+          guess: this.guess,
+        };
+        console.log('Submitting guess with payload:', payload); // Log the payload for debugging
+
         const response = await axios.post(
           `/player/${this.currentPlayer.id}/guess`,
-          {
-            guess: this.guess,
-          }
+          payload
         );
+        console.log('Response data:', response.data); // Log the response data for debugging
         this.turns.push(response.data);
         this.guess = "";
         await this.loadGame();
       } catch (error) {
         console.error("Fout bij het indienen van een gok", error);
+        if (error.response) {
+          console.error('Server responded with:', error.response.data); // Log server response
+        }
       }
     },
   },
