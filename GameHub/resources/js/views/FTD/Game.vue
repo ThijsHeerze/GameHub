@@ -82,7 +82,6 @@ export default {
     async loadGame() {
       try {
         const response = await axios.get(`/game/${this.gameId}`);
-        
         this.game = response.data;
         console.log('Game data:', this.game); // Log the entire game data for debugging
         
