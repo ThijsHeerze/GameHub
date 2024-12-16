@@ -5,10 +5,10 @@ use App\Http\Controllers\FTD\FtdGameController;
 use App\Http\Controllers\FTD\TurnController;
 use App\Http\Controllers\FTD\PlayerController;
 
-Route::get('/', function () {
-    return view('gamehub');
-});
-
 Route::post('/game/start', [FtdGameController::class, 'startGame']);
 Route::get('/game/{id}', [FtdGameController::class, 'getGame']);
 Route::post('/player/{player}/guess', [TurnController::class, 'guess']);
+
+Route::get('/{any}', function () {
+    return view('gamehub'); // Verwijs naar je Blade-template.
+})->where('any', '.*');
