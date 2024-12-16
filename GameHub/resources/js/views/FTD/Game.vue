@@ -10,7 +10,7 @@
 
         <div v-if="currentPlayer" class="mb-6">
           <h3 class="text-lg font-semibold text-gray-800 mb-2">
-            {{ currentPlayer.name }}, raad een kaart
+            {{ currentPlayer?.name }}, raad een kaart
           </h3>
           <div class="flex items-center space-x-4">
             <input
@@ -39,7 +39,7 @@
             class="p-4 bg-gray-50 border rounded-lg shadow-sm flex justify-between items-center"
           >
             <span class="text-gray-700">
-              <span class="font-semibold">{{ turn.player.name }}</span> raadde
+              <span class="font-semibold">{{ turn.player?.name }}</span> raadde
               <span class="font-semibold">{{ turn.guess }}</span>:
             </span>
             <span
@@ -96,7 +96,7 @@ export default {
         }
 
         this.currentPlayer =
-          this.game.players[this.game.turns.length % this.game.players.length];
+          this.game.players[this.game.turns.length % this.game.players.length] || null;
         this.remainingCards = 52 - this.game.turns.length; // Bijv. kaarten nog in het spel
         this.turns = this.game.turns;
       } catch (error) {
@@ -104,6 +104,11 @@ export default {
       }
     },
     async submitGuess() {
+      if (!this.currentPlayer) {
+        console.error("Geen huidige speler gevonden");
+        return;
+      }
+
       try {
         const payload = {
           guess: this.guess,
