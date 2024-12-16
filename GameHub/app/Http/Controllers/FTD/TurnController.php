@@ -13,14 +13,18 @@ class TurnController extends Controller
 {
     public function guess(Request $request, Player $player)
     {
-        if (!$player) {
-            return response()->json(['error' => 'Player not found'], 404);
-        }
-
         $game = $player->game;
+
+        if (!$game) {
+            return response()->json(['error' => 'Game not found for this player'], 404);
+        }
 
         $guess = $request->input('guess');
         $card = $game->cards()->where('is_drawn', false)->inRandomOrder()->first();
+
+        if (!$card) {
+            return response()->json(['error' => 'No more cards to draw'], 400);
+        }
 
         $correct = $guess === $card->value;
         $drinks = $correct ? 0 : abs((int)$guess - (int)$card->value);
@@ -34,11 +38,8 @@ class TurnController extends Controller
 
         $card->update(['is_drawn' => true]);
 
-        // try {
-        //     $player->update(['drinks_taken' => $player->drinks_taken + $drinks]);
-        // } catch (error) {
-        //     console.error(error.response.data);
-        // }
+        // dd($request->all());
+
 
         return response()->json($turn);
     }
