@@ -6,9 +6,6 @@
       </h1>
 
       <div v-if="game">
-        <h2 class="text-xl font-semibold text-gray-700 mb-2">
-          Huidige Dealer: <span class="text-blue-500">{{ dealer?.name }}</span>
-        </h2>
         <p class="text-gray-600 mb-4">Kaarten over: <span class="font-bold">{{ remainingCards }}</span></p>
 
         <div v-if="currentPlayer" class="mb-6">
@@ -66,7 +63,7 @@ export default {
   data() {
     return {
       game: null,
-      dealer: null,
+      // dealer: null,
       currentPlayer: null,
       remainingCards: 0,
       guess: "",
@@ -94,9 +91,6 @@ export default {
           this.game.players.forEach((player, index) => {
             console.log(`Player ${index}:`, player); // Log each player for debugging
           });
-
-          this.dealer = this.game.players.find((p) => p.is_dealer);
-          console.log('Dealer:', this.dealer); // Log the dealer for debugging
         } else {
           console.error('Players array is missing or not an array');
         }
@@ -111,17 +105,24 @@ export default {
     },
     async submitGuess() {
       try {
+        const payload = {
+          guess: this.guess,
+        };
+        console.log('Submitting guess with payload:', payload); // Log the payload for debugging
+
         const response = await axios.post(
           `/player/${this.currentPlayer.id}/guess`,
-          {
-            guess: this.guess,
-          }
+          payload
         );
+        console.log('Response data:', response.data); // Log the response data for debugging
         this.turns.push(response.data);
         this.guess = "";
         await this.loadGame();
       } catch (error) {
         console.error("Fout bij het indienen van een gok", error);
+        if (error.response) {
+          console.error('Server responded with:', error.response.data); // Log server response
+        }
       }
     },
   },
