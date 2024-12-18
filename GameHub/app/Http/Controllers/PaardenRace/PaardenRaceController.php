@@ -49,7 +49,7 @@ class PaardenRaceController extends Controller
         ]);
 
         // Controleer op winnaar
-        if ($progress[$suit] >= 10) { // Winconditie
+        if ($progress[$suit] >= 6) { // Winconditie
             $race->update(['winner' => $suit]);
             return response()->json(['winner' => $suit, 'progress' => $progress]);
         }

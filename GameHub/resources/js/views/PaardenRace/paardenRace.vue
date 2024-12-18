@@ -1,37 +1,45 @@
 <template>
-  <div class="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
-    <h1 class="text-3xl font-bold text-blue-600 mb-6">PaardenRace</h1>
-
-    <div v-if="winner" class="text-center mb-6">
-      <h2 class="text-2xl font-bold text-green-500">De winnaar is: {{ winner }}</h2>
-    </div>
-
+  <div class="bg-night min-h-screen flex flex-col items-center justify-center text-lavender">
+    <h1 class="text-3xl font-bold mb-6">PaardenRace</h1>  
     <button
       v-if="!gameStarted"
       @click="startGame"
-      class="mb-4 px-6 py-2 bg-blue-500 text-white font-bold rounded-lg"
+      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
     >
       Start Spel
     </button>
+    <div v-if="winner" class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-green-500">De winnaar is: {{ winner }}</h2>
+    </div>
+    <button
+      v-if="winner"
+      @click="startGame"
+      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
+    >
+      Nieuw spel
+    </button>
+
 
     <button
       v-if="gameStarted && !winner"
       @click="drawCard"
-      class="mb-4 px-6 py-2 bg-blue-500 text-white font-bold rounded-lg"
+      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
     >
       Trek een kaart
     </button>
-
-    <div v-if="progress" class="w-full max-w-4xl">
-      <h2 class="text-lg font-semibold mb-4">Voortgang:</h2>
+       
+    <div v-if="progress" class="w-full max-w-4xl mt-8">
+      <h2 class="text-xl font-bold mb-4">Voortgang:</h2>
       <div v-for="(steps, suit) in progress" :key="suit" class="mb-4">
-        <p class="text-gray-700 font-bold">{{ suit }}</p>
-        <div class="bg-gray-300 h-4 w-full rounded-full overflow-hidden">
-          <P></P>
-          <div
-            class="bg-blue-500 h-4 rounded-full"
-            :style="{ width: (steps / 10) * 100 + '%' }"
-          ></div>
+        <p class="font-bold">{{ suit }}</p>
+        <div class="flex items-center gap-8">
+          <div class="bg-raisin h-4 w-full rounded-full overflow-hidden">
+              <div
+                class="bg-lavender h-4 rounded-full"
+                :style="{ width: (steps / 6) * 100 + '%' }"
+              ></div>
+          </div>
+          <p class="text-lg font-bold">{{ steps }}</p>
         </div>
       </div>
     </div>
