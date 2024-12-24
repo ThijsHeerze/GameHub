@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class PaardenRaceController extends Controller
 {
-    private $suits = ['Harten', 'Schoppen', 'Klaveren', 'Ruiten'];
+    private $suits = ['Harten ♥', 'Schoppen ♠', 'Ruiten ♦', 'Klaveren ♣'];
 
     public function start()
     {
@@ -40,21 +40,28 @@ class PaardenRaceController extends Controller
         }
 
         $card = $deck->shift(); // Trek een kaart
-        $suit = $this->suits[($card - 1) % 4]; // Bepaal de kleur
+        $suitIndex = ($card - 1) % 4; // Bepaal de index van de kleur
+        $suit = $this->suits[$suitIndex]; // Haal de kleur op basis van de index
 
-        $progress[$suit] += 1; // Beweeg het paard
+        // Zorg ervoor dat de volgorde van de kleuren consistent blijft
+        $orderedProgress = [];
+        foreach ($this->suits as $s) {
+            $orderedProgress[$s] = $progress[$s];
+        }
+
+        $orderedProgress[$suit] += 1; // Beweeg het paard
         $race->update([
             'deck' => $deck,
-            'progress' => $progress,
+            'progress' => $orderedProgress,
         ]);
 
         // Controleer op winnaar
-        if ($progress[$suit] >= 6) { // Winconditie
+        if ($orderedProgress[$suit] >= 6) { // Winconditie
             $race->update(['winner' => $suit]);
-            return response()->json(['winner' => $suit, 'progress' => $progress]);
+            return response()->json(['winner' => $suit, 'progress' => $orderedProgress]);
         }
 
-        return response()->json(['card' => $card, 'suit' => $suit, 'progress' => $progress]);
+        return response()->json(['card' => $card, 'suit' => $suit, 'progress' => $orderedProgress]);
     }
 
     public function status($id)
