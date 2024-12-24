@@ -4,7 +4,7 @@
     <button
       v-if="!gameStarted"
       @click="startGame"
-      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
+      class="bg-violet px-6 py-3 rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
     >
       Start Spel
     </button>
@@ -14,7 +14,7 @@
     <button
       v-if="winner"
       @click="startGame"
-      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
+      class="bg-violet px-6 py-3 rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
     >
       Nieuw spel
     </button>
@@ -23,22 +23,31 @@
     <button
       v-if="gameStarted && !winner"
       @click="drawCard"
-      class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3 text-white"
+      class="bg-violet px-6 py-3 rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-300 shadow-lg shadow-purple-800 text-white"
     >
       Trek een kaart
     </button>
-       
+
     <div v-if="progress" class="w-full max-w-4xl mt-8">
       <h2 class="text-xl font-bold mb-4">Voortgang:</h2>
-      <div v-for="(steps, suit) in progress" :key="suit" class="mb-4">
-        <p class="font-bold">{{ suit }}</p>
-        <div class="flex items-center gap-8">
-          <div class="bg-raisin h-4 w-full rounded-full overflow-hidden">
-              <div
-                class="bg-lavender h-4 rounded-full"
-                :style="{ width: (steps / 6) * 100 + '%' }"
-              ></div>
+      <div v-for="(steps, suit) in progress" :key="suit" class="mb-12">
+        <p class="font-bold mb-8">{{ suit }}</p>
+        <div class="relative flex items-center gap-8">
+          <!-- Progress bar -->
+          <div class="h-4 w-full rounded-full relative">
+            <div
+              class="h-4 border-b-2 border-lavender transition-all duration-500 ease-in-out"
+              :style="{ width: (steps / 6) * 100 + '%' }"
+            ></div>
+            <!-- Horse animation -->
+            <div
+              class="absolute top-[-1rem] left-0 transition-all duration-500 ease-in-out"
+              :style="{ left: `calc(${(steps / 6) * 100}% - 1rem)` }"
+            >
+              <img :src="image" alt="" class="w-18 h-12" />
+            </div>
           </div>
+          <!-- Steps -->  
           <p class="text-lg font-bold">{{ steps }}</p>
         </div>
       </div>
@@ -56,6 +65,7 @@ export default {
       progress: null,
       winner: null,
       raceId: null,
+      image: "/image/horse.png", // Add the image URL here
     };
   },
   methods: {
@@ -70,7 +80,7 @@ export default {
       } catch (error) {
         console.error("Fout bij het starten van het spel", error);
         if (error.response) {
-          console.error('Server responded with:', error.response.data); // Log server response
+          console.error('Server responded with:', error.response.data); 
         }
       }
     },
@@ -78,9 +88,12 @@ export default {
       try {
         const response = await axios.post(`/paardenRace/draw/${this.raceId}`);
         this.progress = response.data.progress;
-        this.winner = response.data.winner || null;
+        this.winner = response.data.winner || null; // Controleer of er een winnaar is
       } catch (error) {
         console.error("Fout bij het trekken van een kaart", error);
+        if (error.response) {
+          console.error('Server responded with:', error.response.data); 
+        }
       }
     },
   },
