@@ -3,54 +3,94 @@
 namespace App\Http\Controllers\FTD;
 
 use App\Http\Controllers\Controller;
-use App\Models\FTD\Game;
-use App\Models\FTD\Card;
-use App\Models\FTD\Turn;
 use App\Models\FTD\Player;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class TurnController extends Controller
 {
     public function guess(Request $request, Player $player)
     {
-        $request->validate([
-            'guess' => 'required|string',
-        ]);
+        if (!$player) {
+            return response()->json(['error' => 'Player not found'], 404);
+        }
 
         $game = $player->game;
-
-        if (!$game) {
-            Log::error('Game not found for player ID: ' . $player->id);
-            return response()->json(['error' => 'Game not found for this player'], 404);
-        }
-
         $guess = $request->input('guess');
-        $card = $game->cards()->where('is_drawn', false)->inRandomOrder()->first();
 
+        // Trek een willekeurige kaart die nog niet is getrokken
+        $card = $game->cards()->where('is_drawn', false)->first();
         if (!$card) {
-            Log::error('No more cards to draw for game ID: ' . $game->id);
-            return response()->json(['error' => 'No more cards to draw'], 400);
+            return response()->json(['error' => 'Geen kaarten meer beschikbaar'], 400);
         }
 
-        $correct = $guess === $card->value;
-        $drinks = $correct ? 0 : abs((int)$guess - (int)$card->value);
+        // Controleer of er al een eerdere gok is gedaan in de huidige beurt
+        $previousTurn = $game->turns()->where('player_id', $player->id)->latest()->first();
 
-        try {
-            $turn = new Turn();
-            $turn->player_id = $player->id;
-            $turn->game_id = $player->game_id;
-            $turn->guess = $guess;
-            $turn->correct = $correct;
-            $turn->drinks_taken = $drinks;
-            $turn->save();
+        if (!$previousTurn || $previousTurn->correct) {
+            // Eerste gok of vorige beurt was correct
+            $correct = $guess === $card->value;
 
-            $card->update(['is_drawn' => true]);
+            if ($correct) {
+                // Correct bij de eerste poging
+                $turn = $game->turns()->create([
+                    'player_id' => $player->id,
+                    'guess' => $guess,
+                    'correct' => true,
+                    'drinks_taken' => 0,
+                ]);
+                $card->update(['is_drawn' => true]);
 
-            return response()->json($turn, 201);
-        } catch (\Exception $e) {
-            Log::error('Error saving turn for player ID: ' . $player->id . ' - ' . $e->getMessage());
-            return response()->json(['message' => $e->getMessage()], 500);
+                return response()->json([
+                    'message' => 'Correct!',
+                    'turn' => $turn,
+                ]);
+            } else {
+                // Fout, geef feedback (hoger/lager)
+                return response()->json([
+                    'message' => $guess < $card->value ? 'Hoger' : 'Lager',
+                    'second_chance' => true,
+                ]);
+            }
+        } else {
+            // Tweede gok
+            $correct = $guess === $card->value;
+
+            if ($correct) {
+                // Correct bij de tweede poging
+                $turn = $game->turns()->create([
+                    'player_id' => $player->id,
+                    'guess' => $guess,
+                    'correct' => true,
+                    'drinks_taken' => 0,
+                ]);
+                $card->update(['is_drawn' => true]);
+
+                return response()->json([
+                    'message' => 'Correct!',
+                    'turn' => $turn,
+                ]);
+            } else {
+                // Fout bij de tweede poging, bereken aantal slokken
+                $cardValues = ['2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9, '10' => 10, 'J' => 11, 'Q' => 12, 'K' => 13, 'A' => 14];
+                $guessValue = $cardValues[$guess] ?? 0;
+                $cardValue = $cardValues[$card->value] ?? 0;
+
+                $drinks = abs($guessValue - $cardValue);
+
+                $turn = $game->turns()->create([
+                    'player_id' => $player->id,
+                    'guess' => $guess,
+                    'correct' => false,
+                    'drinks_taken' => $drinks,
+                ]);
+
+                $card->update(['is_drawn' => true]);
+
+                return response()->json([
+                    'message' => "Fout! Je moet $drinks slokken nemen.",
+                    'turn' => $turn,
+                ]);
+            }
         }
     }
 }

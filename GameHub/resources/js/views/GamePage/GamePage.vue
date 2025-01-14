@@ -16,6 +16,7 @@ export default {
   mounted() {
     const gameId = this.$route.params.id;
     const games = {
+      "whist": "Whist",
       "fuck-the-dealer": "Fuck the Dealer",
       "tic-tac-toe": "Tic Tac Toe",
       "memory-game": "Memory Game",
