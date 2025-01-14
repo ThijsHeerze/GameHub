@@ -32,7 +32,7 @@
             id: "paarden-race",
             name: "Paarden Race",
             image: "/image/paardenRace.jpg",
-            path: "/paardenRace",
+            path: "/paardenRace/start",
           },
           {
             id: "toepen",

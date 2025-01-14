@@ -14,9 +14,13 @@
             <div class="absolute w-2/5 bottom-5 left-5 bg-black bg-opacity-70 text-white p-4 rounded-lg">
               <h2 class="text-2xl font-bold">{{ state.name }}</h2>
               <p class="mt-2">{{ state.description }}</p>
-              <button class="bg-purple-800 px-4 py-2 rounded hover:bg-violet mt-3" @click="goToGame(game.id)">
-                Speel Nu
-              </button>
+              <router-link :to="state.path">
+                <button
+                    @click="$emit('goToGame', state.path)"
+                    class="bg-purple-800 px-4 py-2 text-white rounded hover:bg-violet mt-3">
+                    Speel Nu
+                </button>
+            </router-link>
             </div>
           </div>
         </div>
@@ -66,7 +70,7 @@ export default {
         description: "Paardenrace is een drankspel waarbij spelers inzetten op  paarden die een race houden, en drinken afhankelijk van het resultaat.",
         image: "/image/paardenRace.jpg",
         thumbnail: "/image/paardenRace.jpg",
-        path: "/paardenRace",
+        path: "/paardenRace/start",
       },
       {
         id: "3",
