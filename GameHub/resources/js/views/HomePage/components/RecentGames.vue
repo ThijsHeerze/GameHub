@@ -23,6 +23,12 @@
       return {
         recentGames: [
           {
+            id: "whist",
+            name: "Whist",
+            image: "/image/whist.jpg",
+            path: "/Whist",
+          },
+          {
             id: "fuck-the-dealer",
             name: "Fuck the Dealer",
             image: "/image/FTD.jpg",

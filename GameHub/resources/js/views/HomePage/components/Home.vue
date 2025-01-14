@@ -57,6 +57,14 @@ export default {
   setup() {
     const games = ref([
       {
+        id: "0",
+        name: "Whist",
+        description: "Wist is een kaartspel waarbij spelers bieden op het aantal slagen dat ze denken te halen.",
+        image: "/image/whist.jpg",
+        thumbnail: "/image/whist.jpg",
+        path: "/Whist",
+      },
+      {
         id: "1",
         name: "Fuck The Dealer",
         description: "Fuck the Dealer is een drankspel waarbij de dealer kaartwaarden raadt, en spelers drinken op basis van fouten.",
