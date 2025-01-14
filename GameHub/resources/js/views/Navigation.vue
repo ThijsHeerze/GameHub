@@ -6,7 +6,7 @@
         <router-link to="/">Home</router-link> <span class="text-lavender text-xl font-bold">|</span> 
         <router-link to="/Whist">Whist</router-link> <span class="text-lavender text-xl font-bold">|</span> 
         <router-link to="/Home">FTD</router-link> <span class="text-lavender text-xl font-bold">|</span>  
-        <router-link to="/PaardenRace">Paarden Race</router-link> 
+        <router-link to="/PaardenRace/1">Paarden Race</router-link> 
       </nav>
     </div>
   </template>
