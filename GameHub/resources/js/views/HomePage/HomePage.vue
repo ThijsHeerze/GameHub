@@ -19,6 +19,11 @@ export default {
     return {
       games: [
         {
+          id: "whist",
+          name: "Whist",
+          image: "/image/whist.jpg",
+        },
+        {
           id: "fuck-the-dealer",
           name: "Fuck the Dealer",
           image: "/image/FTD.jpg",
@@ -33,6 +38,7 @@ export default {
           name: "Toepen",
           image: "/image/toepen.jpg",
         },
+        
       ],
     };
   },

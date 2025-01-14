@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import HomePage from '../views/HomePage/HomePage.vue';
 import Home from '../views/FTD/Home.vue';
+import Whist from '../views/Whist/Whist.vue';
 import Game from '../views/FTD/Game.vue';
 import paardenRace from '../views/PaardenRace/paardenRace.vue';
 import toepen from '../views/Toepen/toepen.vue';
@@ -16,8 +17,7 @@ const routes = [
   
 
   //Routes for Whist
-  // { path: '/Home', name: 'Home', component: Home },
-  // { path: '/Home', name: 'Home', component: Home },
+  { path: '/Whist', name: 'Home', component: Whist },
   
   //Routes for paardenRace
   { path: '/paardenRace', name: 'paardenRace', component: paardenRace },
