@@ -1,39 +1,49 @@
 <template>
-  <div class="bg-night min-h-screen flex flex-col items-center justify-center text-lavender">
+  <div class="bg-night min-h-screen flex flex-col items-center justify-center gap-24 text-lavender">
     <h1 class="text-3xl font-bold mb-6">Toepen</h1>  
 
-    <!-- Formulier om spelers toe te voegen -->
-      <div v-if="!gameStarted" class="flex items-center gap-4">
-        <input
-          v-model="playerName"
-          class="bg-night p-2 border-2 border-lavender rounded"
-          type="text"
-          placeholder="Voeg een speler toe"
-          required
-        />
-
-        <button  
-          type="button" 
-          @click="addPlayer(index)"
-          class="bg-violet px-6 py-3 w-[10rem] rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
-        >
-          Toevoegen
-        </button>
-      </div>
-      <div v-if="!gameStarted" class="">
-        <h2 class="text-xl font-bold mb-4">Spelers</h2>
-        <ul>
-          <li v-for="(player, index) in game.players" :key="index">
-            {{ player }} - 
-            <button 
-              type="button" 
-              @click="removePlayer(index)" 
-              class="text-red-500 hover:text-red-700"
+      <div v-if="!gameStarted" class="flex justify-center w-full gap-20">
+        <div class="flex flex-col items-center justify-center w-full max-w-md gap-4">
+          <input
+            v-model="playerName"
+            ref="playerNameInput"
+            class="bg-night px-4 py-2 border-2 border-lavender rounded"
+            type="text"
+            placeholder="Voeg een speler toe"
+            required
+          />
+          <button  
+            type="button" 
+            @click="addPlayer(index)"
+            class="bg-violet px-6 py-3 w-[10rem] rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
+          >
+            Toevoegen
+          </button>
+        </div>
+        <div v-if="!gameStarted" class="flex flex-col items-center w-full max-w-md">
+          <h2 class="text-xl font-bold mb-4">Spelers</h2>
+          <ul
+            :class="[
+              'grid gap-4 w-full',
+              game.players.length <= 4 ? 'grid-cols-1' : 'grid-cols-2'
+            ]"
+          >
+            <li
+              class="font-semibold flex justify-between items-center p-1"
+              v-for="(player, index) in game.players"
+              :key="index"
             >
-              Verwijder
-            </button>
-          </li>
-        </ul>
+              {{ player }}
+              <button 
+                type="button" 
+                @click="removePlayer(index)" 
+                class="text-red-500 hover:text-red-700 font-light"
+              >
+                Verwijder
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
       <button
         v-if="!gameStarted"
@@ -81,6 +91,16 @@ export default {
   },
   methods: {
     async addPlayer() {
+      if (this.gameStarted) {
+        this.message = "Het spel is al gestart!";
+        this.isSuccess = false;
+        return;
+      }
+      if (this.game.players.length >= 8) {
+        this.message = "Maximaal 8 spelers toegestaan.";
+        this.isSuccess = false;
+        return;
+      }
       if (!this.playerName.trim()) return;
 
       try {
@@ -90,6 +110,13 @@ export default {
 
         this.game = response.data.game;
         this.playerName = "";
+
+        // Focus opnieuw op de input na het toevoegen van een speler
+        this.$nextTick(() => {
+          this.$refs.playerNameInput.focus();
+        });
+
+        localStorage.setItem('toepen_game', JSON.stringify(this.game));
       } catch (error) {
         console.error("Fout bij toevoegen van speler:", error);
       }
@@ -100,15 +127,12 @@ export default {
         await axios.post('/toepen/remove-player', { player: playerToRemove });
         this.game.players.splice(index, 1);
         this.game.scores.splice(index, 1);
+        localStorage.setItem('toepen_game', JSON.stringify(this.game));
+
       } catch (error) {
         console.error("Fout bij verwijderen speler:", error);
       }
     },
-
-
-
-
-    
     async startGame() {
       try {
         const response = await axios.post('/toepen/start', { players: this.players });
@@ -117,14 +141,12 @@ export default {
         console.error("Fout bij het starten van het spel", error);
       }
     },
-    async mounted() {
-      try {
-        const response = await axios.get('/api/toepen');
-        this.game = response.data;
-      } catch (error) {
-        console.error("Fout bij ophalen van het spel:", error);
-      }
-    }
   },
+  mounted() {
+    const saved = localStorage.getItem('toepen_game');
+    if (saved) {
+      this.game = JSON.parse(saved);
+    }
+  }
 };
 </script>
