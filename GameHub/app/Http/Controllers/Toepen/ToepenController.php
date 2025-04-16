@@ -15,6 +15,17 @@ class ToepenController extends Controller
         return view('toepen.form', compact('game'));
     }
 
+    public function getCurrentGame()
+    {
+        $game = Toepen::where('status', 'ongoing')->first();
+
+        if (!$game) {
+            return response()->json(['game' => null]);
+        }
+
+        return response()->json(['game' => $game]);
+    }
+
     // 2. Voeg spelers toe aan de game
     public function addPlayer(Request $request)
     {
@@ -39,7 +50,34 @@ class ToepenController extends Controller
             $game->update(['players' => $players, 'scores' => $scores]);
         }
 
-        return response()->json(['message' => 'Speler toegevoegd!', 'game' => $game]);
+        return response()->json(['game' => $game]);
+    }
+
+    public function removePlayer(Request $request)
+    {
+        // Valideer de invoer
+        $validated = $request->validate([
+            'player' => 'required|string|max:255',
+        ]);
+
+        // Haal de huidige game op
+        $game = Toepen::where('status', 'ongoing')->first();
+
+        if (!$game) {
+            return response()->json(['error' => 'Geen actief spel gevonden.'], 404);
+        }
+
+        // Verwijder de speler
+        $players = $game->players;
+        $scores = $game->scores;
+
+        if (($key = array_search($validated['player'], $players)) !== false) {
+            unset($players[$key]);
+            unset($scores[$key]); // Verwijder ook de score van de speler
+            $game->update(['players' => array_values($players), 'scores' => array_values($scores)]);
+        }
+
+        return response()->json(['game' => $game]);
     }
 
     // 3. Geef een punt aan een speler
@@ -70,4 +108,3 @@ class ToepenController extends Controller
         return response()->json(['message' => 'Het spel is beëindigd.']);
     }
 }
-

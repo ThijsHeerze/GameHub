@@ -3,12 +3,38 @@
     <h1 class="text-3xl font-bold mb-6">Toepen</h1>  
 
     <!-- Formulier om spelers toe te voegen -->
-    <form v-if="!gameStarted" class="flex flex-col items-center gap-8" @submit.prevent="addPlayer">
-      <div class="flex items-center gap-4">
-        <input class="bg-night p-2 border-2 border-lavender rounded" v-model="newPlayer" type="text" placeholder="Voeg een speler toe" required />
-        <button  class="bg-violet px-6 py-3 w-[10rem] rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white" type="submit">Toevoegen</button>
+      <div v-if="!gameStarted" class="flex items-center gap-4">
+        <input
+          v-model="playerName"
+          class="bg-night p-2 border-2 border-lavender rounded"
+          type="text"
+          placeholder="Voeg een speler toe"
+          required
+        />
+
+        <button  
+          type="button" 
+          @click="addPlayer(index)"
+          class="bg-violet px-6 py-3 w-[10rem] rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
+        >
+          Toevoegen
+        </button>
       </div>
-      
+      <div v-if="!gameStarted" class="">
+        <h2 class="text-xl font-bold mb-4">Spelers</h2>
+        <ul>
+          <li v-for="(player, index) in game.players" :key="index">
+            {{ player }} - 
+            <button 
+              type="button" 
+              @click="removePlayer(index)" 
+              class="text-red-500 hover:text-red-700"
+            >
+              Verwijder
+            </button>
+          </li>
+        </ul>
+      </div>
       <button
         v-if="!gameStarted"
         @click="startGame"
@@ -16,7 +42,6 @@
       >
         Start Spel
       </button>
-    </form>
 
 
     <!-- Lijst met spelers en scores -->
@@ -34,100 +59,72 @@
     </div>
 
     <!-- Meldingen -->
-    <p v-if="message" :class="{ success: isSuccess, error: !isSuccess }">{{ message }}</p>
+    <!-- <p v-if="message" :class="{ success: isSuccess, error: !isSuccess }">{{ message }}</p> -->
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   data() {
     return {
+      playerName: "",
       gameStarted: false,
-      game: null,
-      newPlayer: "",
+      game: {
+        players: [],
+        scores: []
+      },
       message: "",
-      isSuccess: true,
+      isSuccess: false,
     };
   },
-  created() {
-    this.fetchGame();
-  },
   methods: {
-    // Haal het huidige spel op
-    async fetchGame() {
+    async addPlayer() {
+      if (!this.playerName.trim()) return;
+
       try {
-        const response = await axios.get("/api/toepen");
-        this.game = response.data;
+        const response = await axios.post('/toepen/add-player', {
+          player: this.playerName,
+        });
+
+        this.game = response.data.game;
+        this.playerName = "";
       } catch (error) {
-        this.setMessage("Fout bij ophalen van het spel.", false);
+        console.error("Fout bij toevoegen van speler:", error);
       }
     },
-    // Start het spel
+    async removePlayer(index) {
+      const playerToRemove = this.game.players[index];
+      try {
+        await axios.post('/toepen/remove-player', { player: playerToRemove });
+        this.game.players.splice(index, 1);
+        this.game.scores.splice(index, 1);
+      } catch (error) {
+        console.error("Fout bij verwijderen speler:", error);
+      }
+    },
+
+
+
+
+    
     async startGame() {
       try {
-        const response = await axios.post("/paardenRace/start");
-        console.log(response.data);
-        this.raceId = response.data.race_id;
-        this.gameStarted = true;
-        this.winner = null;
+        const response = await axios.post('/toepen/start', { players: this.players });
+        this.$router.push(`/toepen/${response.data.id}`);
       } catch (error) {
         console.error("Fout bij het starten van het spel", error);
-        if (error.response) {
-          console.error('Server responded with:', error.response.data); 
-        }
       }
     },
-    // Voeg een speler toe
-    async addPlayer() {
+    async mounted() {
       try {
-        const response = await axios.post("/toepen/add-player", {
-          player: this.newPlayer,
-        });
-        this.game = response.data.game;
-        this.newPlayer = "";
-        this.setMessage("Speler toegevoegd!", true);
-      } catch (error) {
-        console.log(error);
-        this.setMessage("Fout bij toevoegen van speler.", false);
-      }
-    },
-    // Voeg een punt toe aan een speler
-    async addPoint(playerIndex) {
-      try {
-        const response = await axios.post(`/api/toepen/add-point/${playerIndex}`);
+        const response = await axios.get('/api/toepen');
         this.game = response.data;
-        this.setMessage("Punt toegevoegd!", true);
       } catch (error) {
-        this.setMessage("Fout bij toevoegen van punt.", false);
+        console.error("Fout bij ophalen van het spel:", error);
       }
-    },
-    // Beëindig het spel
-    async endGame() {
-      try {
-        await axios.post("/api/toepen/end-game");
-        this.game = null;
-        this.setMessage("Het spel is beëindigd.", true);
-      } catch (error) {
-        this.setMessage("Fout bij beëindigen van het spel.", false);
-      }
-    },
-    // Stel een bericht in
-    setMessage(text, success) {
-      this.message = text;
-      this.isSuccess = success;
-      setTimeout(() => (this.message = ""), 3000);
-    },
+    }
   },
 };
 </script>
-
-<style>
-.success {
-  color: green;
-}
-.error {
-  color: red;
-}
-</style>

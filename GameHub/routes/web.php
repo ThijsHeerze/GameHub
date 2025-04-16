@@ -24,12 +24,15 @@ Route::post('/paardenRace/draw/{id}', [PaardenRaceController::class, 'draw']);
 Route::get('/paardenRace/status/{id}', [PaardenRaceController::class, 'status']);
 
 // Toepen
-Route::get('/toepen', [ToepenController::class, 'showForm'])->name('toepen.form');
-Route::post('/toepen/add-player', [ToepenController::class, 'addPlayer'])->name('toepen.addPlayer');
-Route::post('/toepen/add-point/{playerIndex}', [ToepenController::class, 'addPoint'])->name('toepen.addPoint');
-Route::post('/toepen/end-game', [ToepenController::class, 'endGame'])->name('toepen.endGame');
+Route::post('/toepen/add-player', [ToepenController::class, 'addPlayer']);
+Route::post('/toepen/remove-player', [ToepenController::class, 'removePlayer']);
+Route::post('/toepen/start', [ToepenController::class, 'start']);
+Route::get('/toepen/status/{id}', [ToepenController::class, 'status']);
+Route::post('/toepen/add-point/{playerIndex}', [ToepenController::class, 'addPoint']);
+Route::post('/toepen/end-game', [ToepenController::class, 'endGame']);
+
 
 // Catch-all route
 Route::get('/{any}', function () {
-    return view('gamehub'); 
+    return view('gamehub');
 })->where('any', '.*');
