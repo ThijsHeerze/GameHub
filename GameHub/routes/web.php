@@ -6,8 +6,9 @@ use App\Http\Controllers\FTD\TurnController;
 use App\Http\Controllers\FTD\PlayerController;
 use App\Http\Controllers\Whist\WhistController;
 use App\Http\Controllers\PaardenRace\PaardenRaceController;
+use App\Http\Controllers\Toepen\ToepenController;
 
-//Whist
+// Whist
 Route::get('/whist', [WhistController::class, 'index']); // Voor weergave van de frontend
 Route::post('/whist/submit', [WhistController::class, 'submitScores']); // Voor opslaan van scores
 Route::get('/whist/scores', [WhistController::class, 'getScores']); // Voor ophalen van opgeslagen scores
@@ -21,6 +22,12 @@ Route::post('/player/{player}/guess', [TurnController::class, 'guess']);
 Route::post('/paardenRace/start', [PaardenRaceController::class, 'start']);
 Route::post('/paardenRace/draw/{id}', [PaardenRaceController::class, 'draw']);
 Route::get('/paardenRace/status/{id}', [PaardenRaceController::class, 'status']);
+
+// Toepen
+Route::get('/toepen', [ToepenController::class, 'showForm'])->name('toepen.form');
+Route::post('/toepen/add-player', [ToepenController::class, 'addPlayer'])->name('toepen.addPlayer');
+Route::post('/toepen/add-point/{playerIndex}', [ToepenController::class, 'addPoint'])->name('toepen.addPoint');
+Route::post('/toepen/end-game', [ToepenController::class, 'endGame'])->name('toepen.endGame');
 
 // Catch-all route
 Route::get('/{any}', function () {

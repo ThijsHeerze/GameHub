@@ -8,9 +8,7 @@
     >
       Start Spel
     </button>
-    <div v-if="winner" class="text-center mb-6">
-      <h2 class="text-2xl font-bold text-green-500">De winnaar is: {{ winner }}</h2>
-    </div>
+
     <button
       v-if="winner"
       @click="startGame"
@@ -18,7 +16,6 @@
     >
       Nieuw spel
     </button>
-
 
     <button
       v-if="gameStarted && !winner"
@@ -28,6 +25,9 @@
       Trek een kaart
     </button>
 
+    <div v-if="winner" class="text-center mt-6">
+      <h2 class="text-2xl font-bold text-green-500">De winnaar is: {{ winner }}</h2>
+    </div>
     <div v-if="progress" class="flex items-center justify-center w-full gap-32">
       <div class="w-full max-w-4xl mt-8">
         <h2 class="text-2xl font-bold mb-4">Voortgang:</h2>
@@ -114,7 +114,7 @@ export default {
 
 <style>
 .horse-image {
-  width: 4.5rem; /* Voeg een vaste breedte toe */
-  max-width: 4.5rem; /* Zorg ervoor dat de breedte niet groter is dan de container */
+  width: 4.5rem; 
+  max-width: 4.5rem;
 }
 </style>

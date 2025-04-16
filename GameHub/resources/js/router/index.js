@@ -16,7 +16,7 @@ const routes = [
   { path: '/game/:id', name: 'Game', component: Game },
   
   //Routes for Whist
-  { path: '/Whist', name: 'Home', component: Whist },
+  { path: '/Whist', name: 'Whist', component: Whist },
   
   //Routes for paardenRace
   { path: '/paardenRace/:id', name: 'PaardenRace', component: PaardenRace },
