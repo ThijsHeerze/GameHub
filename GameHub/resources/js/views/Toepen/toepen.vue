@@ -47,6 +47,7 @@
       </div>
       <button
         v-if="!gameStarted"
+        type="button" 
         @click="startGame"
         class="bg-violet px-6 py-3 w-[10rem] rounded-lg hover:bg-purple-600 active:scale-95 transform transition-all duration-800 text-white"
       >
@@ -55,7 +56,7 @@
 
 
     <!-- Lijst met spelers en scores -->
-    <div v-if="gameStarted" class="">
+    <div v-if="gameStarted" class="bg-night min-h-screen flex flex-col items-center justify-center gap-24 text-lavender">
       <h2>Spelers</h2>
       <ul>
         <li v-for="(player, index) in game.players" :key="index">
@@ -111,7 +112,6 @@ export default {
         this.game = response.data.game;
         this.playerName = "";
 
-        // Focus opnieuw op de input na het toevoegen van een speler
         this.$nextTick(() => {
           this.$refs.playerNameInput.focus();
         });
@@ -134,13 +134,22 @@ export default {
       }
     },
     async startGame() {
+      if (this.game.players.length < 2) {
+        alert("Minimaal 2 spelers vereist.");
+        return;
+      }
+
       try {
-        const response = await axios.post('/toepen/start', { players: this.players });
-        this.$router.push(`/toepen/${response.data.id}`);
+        const response = await axios.post('/toepen/start', { players: this.game.players });
+        this.game = response.data.game;
+        this.gameStarted = true;
+        localStorage.setItem('toepen_game', JSON.stringify(this.game));
+
+        this.$router.push(`/toepen/${this.game.id}`);
       } catch (error) {
         console.error("Fout bij het starten van het spel", error);
       }
-    },
+    }
   },
   mounted() {
     const saved = localStorage.getItem('toepen_game');

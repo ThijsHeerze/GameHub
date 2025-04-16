@@ -8,25 +8,6 @@ use App\Http\Controllers\Controller;
 
 class ToepenController extends Controller
 {
-    // 1. Toon het formulier voor spelers toevoegen
-    public function showForm()
-    {
-        $game = Toepen::latest()->first(); // Haal de laatste game op, indien bestaand
-        return view('toepen.form', compact('game'));
-    }
-
-    public function getCurrentGame()
-    {
-        $game = Toepen::where('status', 'ongoing')->first();
-
-        if (!$game) {
-            return response()->json(['game' => null]);
-        }
-
-        return response()->json(['game' => $game]);
-    }
-
-    // 2. Voeg spelers toe aan de game
     public function addPlayer(Request $request)
     {
         // Valideer de invoer
@@ -94,6 +75,48 @@ class ToepenController extends Controller
         $game->update(['scores' => $scores]);
 
         return response()->json(['message' => 'Punt toegevoegd aan speler!', 'game' => $game]);
+    }
+
+    // 4. Start het spel
+    public function start(Request $request)
+    {
+        // Valideer de invoer
+        $validated = $request->validate([
+            'players' => 'required|array|min:2',
+            'players.*' => 'required|string|max:255',
+        ]);
+
+        // Maak een nieuw spel aan
+        $game = Toepen::create([
+            'players' => $validated['players'],
+            'scores' => array_fill(0, count($validated['players']), 0), // Initialiseer scores op 0
+            'status' => 'ongoing',
+        ]);
+
+        return response()->json(['game' => $game]);
+    }
+    // 5. Toon de status van het spel
+    public function status($id)
+    {
+        $game = Toepen::find($id);
+
+        if (!$game) {
+            return response()->json(['error' => 'Geen spel gevonden.'], 404);
+        }
+
+        return response()->json(['game' => $game]);
+    }
+
+    // 6. Haal het spel op
+    public function getGame($id)
+    {
+        $game = Toepen::find($id);
+
+        if (!$game) {
+            return response()->json(['error' => 'Geen spel gevonden.'], 404);
+        }
+
+        return response()->json(['game' => $game]);
     }
 
     // 4. Beëindig het spel

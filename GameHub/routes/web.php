@@ -27,6 +27,7 @@ Route::get('/paardenRace/status/{id}', [PaardenRaceController::class, 'status'])
 Route::post('/toepen/add-player', [ToepenController::class, 'addPlayer']);
 Route::post('/toepen/remove-player', [ToepenController::class, 'removePlayer']);
 Route::post('/toepen/start', [ToepenController::class, 'start']);
+Route::get('/toepen/{id}', [ToepenController::class, 'getGame']);
 Route::get('/toepen/status/{id}', [ToepenController::class, 'status']);
 Route::post('/toepen/add-point/{playerIndex}', [ToepenController::class, 'addPoint']);
 Route::post('/toepen/end-game', [ToepenController::class, 'endGame']);
