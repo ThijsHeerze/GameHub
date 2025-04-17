@@ -1,31 +1,59 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-    <h1 class="text-4xl font-bold mb-6">Toepen</h1>
+  <div v-if="game && !loading" class="bg-night min-h-screen flex flex-col items-center justify-center gap-24 text-lavender">
+    <h2>Spelers</h2>
+    <ul>
+      <li v-for="(player, index) in game.players" :key="index">
+        {{ player }} - {{ game.scores[index] }} punten
+        <button @click="addPoint(index)">+1 Punt</button>
+      </li>
+    </ul>
 
-    <div class="bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-xl">
-      <PlayerList :players="game.players" />
-      <ScoreBoard :players="game.players" :scores="game.scores" />
-      <ActionButtons @play-turn="handleTurn" @end-game="handleEnd" />
-    </div>
+    <button @click="endGame">Beëindig Spel</button>
   </div>
+
+  <!-- Loading indicator -->
+  <!-- <div v-if="loading" class="loading-indicator">
+    Laden...
+  </div> -->
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import PlayerList from '@/components/PlayerList.vue';
-import ScoreBoard from '@/components/ScoreBoard.vue';
-import ActionButtons from '@/components/ActionButtons.vue';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
-const game = ref({
-  players: ['Ruben', 'Thijs'],
-  scores: [0, 0],
+const route = useRoute();
+const router = useRouter();
+
+const game = ref(null);
+const loading = ref(true);
+
+onMounted(async () => {
+  const gameId = route.params.id;
+
+  try {
+    const response = await axios.get(`/toepen/${gameId}`);
+    game.value = response.data.game;
+  } catch (error) {
+    console.error("Fout bij ophalen van spel:", error);
+  } finally {
+    loading.value = false;
+  }
 });
 
-const handleTurn = () => {
-  console.log('Beurt gespeeld');
-};
+function addPoint(index) {
+  game.value.scores[index] += 1;
+}
 
-const handleEnd = () => {
-  console.log('Spel gestopt');
-};
+async function endGame() {
+  try {
+    const response = await axios.post(`/toepen/${game.value.id}/end`);
+    if (response.status === 200) {
+      alert("Het spel is beëindigd!");
+      router.push('/toepen');
+    }
+  } catch (error) {
+    console.error("Fout bij beëindigen van spel:", error);
+  }
+}
 </script>

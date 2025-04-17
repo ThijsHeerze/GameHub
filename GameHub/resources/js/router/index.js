@@ -5,8 +5,8 @@ import Home from '../views/FTD/Home.vue';
 import Whist from '../views/Whist/Whist.vue';
 import Game from '../views/FTD/Game.vue';
 import PaardenRace from '../views/PaardenRace/paardenRace.vue';
-import toepen from '../views/Toepen/toepen.vue';
-import GameView from '../views/Toepen/gameView.vue';
+import Toepen from '../views/Toepen/toepen.vue';
+import GameView from '../views/Toepen/GameView.vue';
 
 const routes = [
   //Routes for HomePage
@@ -23,8 +23,8 @@ const routes = [
   { path: '/paardenRace/:id', name: 'PaardenRace', component: PaardenRace },
 
   //Routes for toepen
-  { path: '/toepen', name: 'toepen', component: toepen },
-  { path: '/toepen/:id', name: 'gameView', component: GameView },
+  { path: '/toepen', name: 'Toepen', component: Toepen },
+  { path: '/toepen/:id', name: 'GameView', component: GameView },
 ];
 
 const router = createRouter({

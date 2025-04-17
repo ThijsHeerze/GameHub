@@ -55,20 +55,7 @@
       </button>
 
 
-    <!-- Lijst met spelers en scores -->
-    <div v-if="gameStarted" class="bg-night min-h-screen flex flex-col items-center justify-center gap-24 text-lavender">
-      <h2>Spelers</h2>
-      <ul>
-        <li v-for="(player, index) in game.players" :key="index">
-          {{ player }} - {{ game.scores[index] }} punten
-          <button @click="addPoint(index)">+1 Punt</button>
-        </li>
-      </ul>
-
-      <!-- Beëindig spel -->
-      <button @click="endGame">Beëindig Spel</button>
-    </div>
-
+      <GameView v-if="gameStarted" :game="game" />
     <!-- Meldingen -->
     <!-- <p v-if="message" :class="{ success: isSuccess, error: !isSuccess }">{{ message }}</p> -->
   </div>
@@ -76,6 +63,7 @@
 
 <script>
 import axios from 'axios';
+import GameView from './GameView.vue';
 
 export default {
   data() {

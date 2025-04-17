@@ -61,22 +61,6 @@ class ToepenController extends Controller
         return response()->json(['game' => $game]);
     }
 
-    // 3. Geef een punt aan een speler
-    public function addPoint($playerIndex)
-    {
-        $game = Toepen::where('status', 'ongoing')->first();
-
-        if (!$game) {
-            return response()->json(['error' => 'Geen actief spel gevonden.'], 404);
-        }
-
-        $scores = $game->scores;
-        $scores[$playerIndex] += 1; // Verhoog de score van de speler
-        $game->update(['scores' => $scores]);
-
-        return response()->json(['message' => 'Punt toegevoegd aan speler!', 'game' => $game]);
-    }
-
     // 4. Start het spel
     public function start(Request $request)
     {
@@ -120,14 +104,17 @@ class ToepenController extends Controller
     }
 
     // 4. Beëindig het spel
-    public function endGame()
+    public function endGame($id)
     {
-        $game = Toepen::where('status', 'ongoing')->first();
+        $game = Toepen::find($id);
 
-        if ($game) {
-            $game->update(['status' => 'finished']);
+        if (!$game) {
+            return response()->json(['error' => 'Spel niet gevonden.'], 404);
         }
 
-        return response()->json(['message' => 'Het spel is beëindigd.']);
+        $game->status = 'finished';
+        $game->save();
+
+        return response()->json(['message' => 'Spel beëindigd.', 'game' => $game], 200);
     }
 }
